@@ -186,6 +186,38 @@ public class Model
     return sorted;
   }
 
+  public Map<String, Integer> getAgeDistribution()
+  {
+    Map<String, Integer> distribution = new LinkedHashMap<>();
+    distribution.put("0-19", 0);
+    distribution.put("20-39", 0);
+    distribution.put("40-59", 0);
+    distribution.put("60-79", 0);
+    distribution.put("80+", 0);
+
+    for (int row = 0; row < dataFrame.getRowCount(); row++)
+    {
+      String birthdate = dataFrame.getValue("BIRTHDATE", row);
+      if (birthdate.length() < 4)
+      {
+        continue;
+      }
+      try
+      {
+        int age = 2026 - Integer.parseInt(birthdate.substring(0, 4));
+        String group;
+        if      (age < 20) group = "0-19";
+        else if (age < 40) group = "20-39";
+        else if (age < 60) group = "40-59";
+        else if (age < 80) group = "60-79";
+        else               group = "80+";
+        distribution.put(group, distribution.get(group) + 1);
+      }
+      catch (NumberFormatException ignored) {}
+    }
+    return distribution;
+  }
+
   public List<String[]> searchFor(String keyword)
   {
     List<String[]> results = new ArrayList<>();
